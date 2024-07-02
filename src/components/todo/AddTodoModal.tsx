@@ -15,9 +15,13 @@ import { useAppDispatch } from "@/redux/hook";
 import { addTodo } from "@/redux/features/TodoSlice";
 
 const AddTodoModal = () => {
+  // for local state management
   const dispatch = useAppDispatch();
-  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+
+  const [title, setTitle] = useState("");
+
+  // handle form submit
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const id = Math.random().toString(36).substring(2, 7);

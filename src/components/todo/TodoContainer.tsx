@@ -1,10 +1,20 @@
 import TodoCard from "./TodoCard";
 import AddTodoModal from "./AddTodoModal";
 import FilterDropdown from "./FilterDropdown";
-import { useAppSelector } from "@/redux/hook";
+import { useGetTodosQuery } from "@/redux/api/api";
+import { TTodo } from "@/redux/features/TodoSlice";
 
 const TodoContainer = () => {
-  const todos = useAppSelector((state) => state.todos.todos);
+  const { data: todos, error, isLoading } = useGetTodosQuery(undefined);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+  if (error) {
+    return <p>error!</p>;
+  }
+  console.log(todos.data);
+
   return (
     <div className="mt-8">
       <div className="flex items-center justify-between gap-5">
@@ -12,9 +22,11 @@ const TodoContainer = () => {
         <FilterDropdown />
       </div>
       <div className="bg-slate-200 p-8 w-full rounded-md mt-5 space-y-3">
-        {todos.length > 0 ? (
-          todos.map((todo) => (
+        {todos.data.length > 0 ? (
+          todos.data.map((todo: TTodo) => (
             <TodoCard
+              priority={todo.priority}
+              key={todo.id}
               id={todo.id}
               title={todo.title}
               description={todo.description}

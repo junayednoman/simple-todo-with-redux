@@ -5,26 +5,36 @@ import {
 } from "@/redux/features/TodoSlice";
 import { useAppDispatch } from "@/redux/hook";
 
-const TodoCard = ({ title, description, id, isCompleted }: TTodo) => {
+const TodoCard = ({ title, description, id, isCompleted, priority }: TTodo) => {
   const dispatch = useAppDispatch();
-  const updateDispatch = useAppDispatch();
 
   return (
-    <div className="bg-white p-3 rounded-sm px-5 font-medium flex items-center justify-between">
+    <div className="bg-white p-3 rounded-sm px-5 flex items-center justify-between">
       <input
-        onChange={() => updateDispatch(toggleCompleteTask(id))}
+        className="w-5 h-5 cursor-pointer mr-4"
+        onClick={() => dispatch(toggleCompleteTask(id))}
         type="checkbox"
       />
-      <p>{title}</p>
-      <p>
+      <p className="font-medium flex-[2]">{title}</p>
+      <div className="flex-1 flex items-center gap-1">
+        <div
+          className={`size-3 rounded-full
+          ${priority === "high" && "bg-red-600"}          
+          ${priority === "medium" && "bg-yellow-500"}          
+          ${priority === "low" && "bg-green-500"}          
+          `}
+        ></div>
+        <p className="capitalize">{priority}</p>
+      </div>
+      <div className="flex-1">
         {isCompleted ? (
           <p className="text-green-500">Completed</p>
         ) : (
           <p className="text-red-400">Pending</p>
         )}
-      </p>
-      <p>{description}</p>
-      <div className="flex items-center gap-4 justify-center">
+      </div>
+      <p className="flex-[2]">{description}</p>
+      <div className="flex items-center gap-4 justify-end flex-1">
         <button
           className="bg-red-600 rounded-md text-white p-2"
           onClick={() => dispatch(removeTodo(id))}
