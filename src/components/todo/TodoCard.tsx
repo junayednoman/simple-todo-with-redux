@@ -1,18 +1,46 @@
-import {
-  TTodo,
-  removeTodo,
-  toggleCompleteTask,
-} from "@/redux/features/TodoSlice";
-import { useAppDispatch } from "@/redux/hook";
+import { useDeleteTodoMutation, useUpdateTaskMutation } from "@/redux/api/api";
+import { TTodo } from "@/redux/features/TodoSlice";
 
-const TodoCard = ({ title, description, id, isCompleted, priority }: TTodo) => {
-  const dispatch = useAppDispatch();
+const TodoCard = ({
+  title,
+  description,
+  _id,
+  isCompleted,
+  priority,
+}: TTodo) => {
+  // handle todo delete
+  const [deleteTodo, { data, isLoading, isError, isSuccess }] =
+    useDeleteTodoMutation();
+  console.log({ data, isLoading, isError, isSuccess });
+
+  useDeleteTodoMutation();
+  const handleTodoDelete = (id: string) => {
+    deleteTodo(id);
+  };
+
+  // handle toggle task complete
+  const [
+    updateTask,
+    { data: toggledCompleteTask, isSuccess: isToggledTaskCompletion },
+  ] = useUpdateTaskMutation();
+  console.log(toggledCompleteTask, isToggledTaskCompletion);
+
+  const handleToggleTaskCompletion = (id: string) => {
+    const updateData = {
+      title,
+      description,
+      isCompleted: !isCompleted,
+      priority,
+    };
+    const option = { updateData, id };
+    updateTask(option);
+  };
 
   return (
     <div className="bg-white p-3 rounded-sm px-5 flex items-center justify-between">
       <input
         className="w-5 h-5 cursor-pointer mr-4"
-        onClick={() => dispatch(toggleCompleteTask(id))}
+        onClick={() => handleToggleTaskCompletion(_id)}
         type="checkbox"
       />
       <p className="font-medium flex-[2]">{title}</p>
@@ -37,7 +65,7 @@ const TodoCard = ({ title, description, id, isCompleted, priority }: TTodo) => {
       <div className="flex items-center gap-4 justify-end flex-1">
         <button
           className="bg-red-600 rounded-md text-white p-2"
-          onClick={() => dispatch(removeTodo(id))}
+          onClick={() => handleTodoDelete(_id)}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

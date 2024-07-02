@@ -11,22 +11,36 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { useAppDispatch } from "@/redux/hook";
-import { addTodo } from "@/redux/features/TodoSlice";
+import { useAddTodoMutation } from "@/redux/api/api";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const AddTodoModal = () => {
   // for local state management
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
   const [description, setDescription] = useState("");
 
   const [title, setTitle] = useState("");
+  const [priority, setPriority] = useState("");
+
+  const [addTodo, { data, isLoading, isError, isSuccess }] =
+    useAddTodoMutation();
+
+  console.log({ data, isLoading, isError, isSuccess });
 
   // handle form submit
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const id = Math.random().toString(36).substring(2, 7);
-    const todo = { id, title, description };
-    dispatch(addTodo(todo));
+    const todo = { title, description, priority, isCompleted: false };
+    addTodo(todo);
   };
 
   return (
@@ -63,6 +77,22 @@ const AddTodoModal = () => {
               id="description"
               className="col-span-3"
             />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">Priority</Label>
+            <Select onValueChange={(value) => setPriority(value)}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select a priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Priority</SelectLabel>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
           <div className="ml-auto">
             <DialogClose asChild>
